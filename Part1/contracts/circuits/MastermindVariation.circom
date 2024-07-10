@@ -39,7 +39,7 @@ template MastermindVariation() {
 
     // Output
     signal output solnHashOut;
-    
+
     //NOTE - contraint to pubNumBlacks+pubNumWhites+pubNumBlues<=4
     lessThanFour = LessThan(4);
     signal interBlackWhitesPegSum <== pubNumBlacks + pubNumWhites
@@ -47,25 +47,63 @@ template MastermindVariation() {
     lessThanFour.in[1] <== 5;
     lessThanFour.out === 1;
     
-    var guess[4] = [pubGuessA, pubGuessB, pubGuessC, pubGuessD];
-    var soln[4] =  [privSolnA, privSolnB, privSolnC, privSolnD];
+    var guessColor[5] = [
+        pubGuessColorA, 
+        pubGuessColorB, 
+        pubGuessColorC, 
+        pubGuessColorD, 
+        pubGuessColorE
+    ];
+    var guessShape[5] = [
+        pubGuessShapeA,
+        pubGuessShapeB,
+        pubGuessShapeC,
+        pubGuessShapeD,
+        pubGuessShapeE
+    ];
+    var solnColor[5] =  [
+        privSolnColorA,
+        privSolnColorB,
+        privSolnColorC,
+        privSolnColorD,
+        privSolnColorE
+    ];  
+    var solnShape[5] =  [
+        privSolnShapeA,
+        privSolnShapeB,
+        privSolnShapeC,
+        privSolnShapeD,
+        privSolnShapeE
+    ];  
     var j = 0;
     var k = 0;
-    component lessThan[8];
+    component lessThan[20];
     component equalGuess[6];
     component equalSoln[6];
     var equalIdx = 0;
 
-    // Create a constraint that the solution and guess digits are all less than 10.
-    for (j=0; j<4; j++) {
-        lessThan[j] = LessThan(4);
-        lessThan[j].in[0] <== guess[j];
-        lessThan[j].in[1] <== 10;
+    // Create a constraint that the solution and guess digits are all less than 5.
+    for (j=0; j<5; j++) {
+        lessThan[j] = LessThan(3);
+        lessThan[j].in[0] <== guessColor[j];
+        lessThan[j].in[1] <== 5;
         lessThan[j].out === 1;
-        lessThan[j+4] = LessThan(4);
-        lessThan[j+4].in[0] <== soln[j];
-        lessThan[j+4].in[1] <== 10;
-        lessThan[j+4].out === 1;
+        
+        lessThan[j+5] = LessThan(3);
+        lessThan[j+5].in[0] <== guessShape[j];
+        lessThan[j+5].in[1] <== 5;
+        lessThan[j+5].out === 1;
+        
+        lessThan[j+10] = LessThan(3);
+        lessThan[j+10].in[0] <== solnColor[j];
+        lessThan[j+10].in[1] <== 5;
+        lessThan[j+10].out === 1;
+
+        lessThan[j+15] = LessThan(3);
+        lessThan[j+15].in[0] <== solnShape[j];
+        lessThan[j+15].in[1] <== 5;
+        lessThan[j+15].out === 1;
+
         for (k=j+1; k<4; k++) {
             // Create a constraint that the solution and guess digits are unique. no duplication.
             equalGuess[equalIdx] = IsEqual();
