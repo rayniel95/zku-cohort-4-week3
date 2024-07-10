@@ -39,7 +39,14 @@ template MastermindVariation() {
 
     // Output
     signal output solnHashOut;
-    //TODO - add contraint to pubNumBlacks+pubNumWhites+pubNumBlues<=4
+    
+    //NOTE - contraint to pubNumBlacks+pubNumWhites+pubNumBlues<=4
+    lessThanFour = LessThan(4);
+    signal interBlackWhitesPegSum <== pubNumBlacks + pubNumWhites
+    lessThanFour.in[0] <== interBlackWhitesPegSum + pubNumBlues;
+    lessThanFour.in[1] <== 5;
+    lessThanFour.out === 1;
+    
     var guess[4] = [pubGuessA, pubGuessB, pubGuessC, pubGuessD];
     var soln[4] =  [privSolnA, privSolnB, privSolnC, privSolnD];
     var j = 0;
