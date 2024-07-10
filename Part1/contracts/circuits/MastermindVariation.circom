@@ -40,13 +40,14 @@ template MastermindVariation() {
     // Output
     signal output solnHashOut;
 
+    //TODO - extract this to a template
     //NOTE - contraint to pubNumBlacks+pubNumWhites+pubNumBlues<=4
-    lessThanFour = LessThan(4);
+    lessThanFour = LessThan(3);
     signal interBlackWhitesPegSum <== pubNumBlacks + pubNumWhites
     lessThanFour.in[0] <== interBlackWhitesPegSum + pubNumBlues;
     lessThanFour.in[1] <== 5;
     lessThanFour.out === 1;
-    
+    //TODO - extract this to a template
     var guessColor[5] = [
         pubGuessColorA, 
         pubGuessColorB, 
@@ -78,9 +79,9 @@ template MastermindVariation() {
     var j = 0;
     var k = 0;
     component lessThan[20];
-    component equalGuess[6];
-    component equalSoln[6];
-    var equalIdx = 0;
+    // component equalGuess[6];
+    // component equalSoln[6];
+    // var equalIdx = 0;
 
     // Create a constraint that the solution and guess digits are all less than 5.
     for (j=0; j<5; j++) {
@@ -104,18 +105,18 @@ template MastermindVariation() {
         lessThan[j+15].in[1] <== 5;
         lessThan[j+15].out === 1;
 
-        for (k=j+1; k<4; k++) {
-            // Create a constraint that the solution and guess digits are unique. no duplication.
-            equalGuess[equalIdx] = IsEqual();
-            equalGuess[equalIdx].in[0] <== guess[j];
-            equalGuess[equalIdx].in[1] <== guess[k];
-            equalGuess[equalIdx].out === 0;
-            equalSoln[equalIdx] = IsEqual();
-            equalSoln[equalIdx].in[0] <== soln[j];
-            equalSoln[equalIdx].in[1] <== soln[k];
-            equalSoln[equalIdx].out === 0;
-            equalIdx += 1;
-        }
+        // for (k=j+1; k<4; k++) {
+        //     // Create a constraint that the solution and guess digits are unique. no duplication.
+        //     equalGuess[equalIdx] = IsEqual();
+        //     equalGuess[equalIdx].in[0] <== guess[j];
+        //     equalGuess[equalIdx].in[1] <== guess[k];
+        //     equalGuess[equalIdx].out === 0;
+        //     equalSoln[equalIdx] = IsEqual();
+        //     equalSoln[equalIdx].in[0] <== soln[j];
+        //     equalSoln[equalIdx].in[1] <== soln[k];
+        //     equalSoln[equalIdx].out === 0;
+        //     equalIdx += 1;
+        // }
     }
 
     // Count hit & blow
