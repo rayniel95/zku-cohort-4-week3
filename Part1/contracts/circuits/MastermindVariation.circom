@@ -1,7 +1,7 @@
 pragma circom 2.0.0;
 
 // [assignment] implement a variation of mastermind from https://en.wikipedia.org/wiki/Mastermind_(board_game)#Variation as a circuit
-
+// Grand Mastermind variation
 include "../../node_modules/circomlib/circuits/comparators.circom";
 include "../../node_modules/circomlib/circuits/bitify.circom";
 include "../../node_modules/circomlib/circuits/poseidon.circom";
@@ -14,20 +14,32 @@ template MastermindVariation() {
     signal input pubGuessColorC;
     signal input pubGuessColorD;
     signal input pubGuessColorE;
-    signal input pubNumHit;
-    signal input pubNumBlow;
+    signal input pubGuessShapeA;
+    signal input pubGuessShapeB;
+    signal input pubGuessShapeC;
+    signal input pubGuessShapeD;
+    signal input pubGuessShapeE;
+    signal input pubNumBlacks;
+    signal input pubNumWhites;
+    signal input pubNumBlues;
     signal input pubSolnHash;
 
     // Private inputs
-    signal input privSolnA;
-    signal input privSolnB;
-    signal input privSolnC;
-    signal input privSolnD;
+    signal input privSolnColorA;
+    signal input privSolnColorB;
+    signal input privSolnColorC;
+    signal input privSolnColorD;
+    signal input privSolnColorE;
+    signal input privSolnShapeA;
+    signal input privSolnShapeB;
+    signal input privSolnShapeC;
+    signal input privSolnShapeD;
+    signal input privSolnShapeE;
     signal input privSalt;
 
     // Output
     signal output solnHashOut;
-
+    //TODO - add contraint to pubNumBlacks+pubNumWhites+pubNumBlues<=4
     var guess[4] = [pubGuessA, pubGuessB, pubGuessC, pubGuessD];
     var soln[4] =  [privSolnA, privSolnB, privSolnC, privSolnD];
     var j = 0;
