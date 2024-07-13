@@ -202,17 +202,17 @@ template MastermindVariation() {
             }
         }
     }
-    // Create a constraint around the number of blacks
-    component equalHit = IsEqual();
-    equalHit.in[0] <== pubNumHit;
-    equalHit.in[1] <== blacks;
-    equalHit.out === 1;
-    
-    // Create a constraint around the number of whites
-    component equalBlow = IsEqual();
-    equalBlow.in[0] <== pubNumBlow;
-    equalBlow.in[1] <== whites;
-    equalBlow.out === 1;
+
+    component equalAssertion[3];
+    var colorAssertionCounted = [numBlacks, numWhites, numBlues];
+    var colorAssertionPub = [pubNumBlacks, pubNumWhites, pubNumBlues];
+
+    for(var index=0; index<=3; index++){
+        equalAssertion[index] = IsEqual();
+        equalAssertion[index].in[0] = colorAssertionCounted[index];
+        equalAssertion[index].in[1] = colorAssertionPub[index];
+        equalAssertion[index].out === 1;
+    }
 
     // Verify that the hash of the private solution matches pubSolnHash
     component poseidon = Poseidon(5);
