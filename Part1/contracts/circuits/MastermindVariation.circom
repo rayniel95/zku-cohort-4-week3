@@ -165,7 +165,43 @@ template MastermindVariation() {
         }
     }
 
+    var numBlacks;
+    var numWhites; 
+    var numBlues;
+    var res = 4;
+    var intBlacks;
+    var intWhites;
+    var intBlues;
 
+    for(var index = 0; index<25; index++){
+        if(colors[index]==Blacks){
+            intBlacks++;
+        }
+        if(colors[index]==Whites){
+            intWhites++;
+        }
+        if(colors[index]==Blues){
+            intBlues++;
+        }
+    }
+    if(intBlacks>=res){
+        numBlacks=res;
+    } else{
+        numBlacks = intBlacks;
+        res -= numBlacks;
+        if(intWhites>=res){
+            numWhites = res;
+        }else{
+            numWhites = intWhites;
+            res -= numWhites;
+            if(intBlues>=res){
+                numBlues = res;
+            }else{
+                numBlues = intBlues;
+                res -= numBlues;
+            }
+        }
+    }
     // Create a constraint around the number of blacks
     component equalHit = IsEqual();
     equalHit.in[0] <== pubNumHit;
