@@ -153,15 +153,18 @@ template MastermindVariation() {
 
             if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && j==k){
                 colors[5*j+k] = Blacks;
-            }
-            if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && j!=k && colors[5*j+k] != Blacks){
-                colors[5*j+k] = Whites;
-            }
-            if((equalBWB[5*j+k].out ^ equalBWB[25+5*j+k].out) && colors[5*j+k] == None){
-                colors[5*j+k] = Blues;
+            } else{
+                if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && colors[5*j+k] != Blacks){
+                    colors[5*j+k] = Whites;
+                } else{
+                    if((equalBWB[5*j+k].out || equalBWB[25+5*j+k].out) && colors[5*j+k] == None){
+                       colors[5*j+k] = Blues;
+                    }
+                }
             }
         }
     }
+
 
     // Create a constraint around the number of blacks
     component equalHit = IsEqual();
