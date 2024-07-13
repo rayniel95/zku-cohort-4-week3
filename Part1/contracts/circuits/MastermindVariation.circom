@@ -85,6 +85,7 @@ template MastermindVariation() {
 
     // Create a constraint that the solution and guess digits are all less than 5.
     for (j=0; j<5; j++) {
+        //TODO - use a cicle to unroll this
         lessThan[j] = LessThan(3);
         lessThan[j].in[0] <== guessColor[j];
         lessThan[j].in[1] <== 5;
@@ -119,34 +120,59 @@ template MastermindVariation() {
         // }
     }
 
-    // Count hit & blow
-    var hit = 0;
-    var blow = 0;
-    component equalHB[16];
+    // Count blacks & whites & blues
+    var Blacks = 1;
+    var Whites = 2;
+    var Blues = 3;
+    var None = 0;
+    var colors[25];
+    component equalBWB[50];
 
-    for (j=0; j<4; j++) {
-        for (k=0; k<4; k++) {
-            equalHB[4*j+k] = IsEqual();
-            equalHB[4*j+k].in[0] <== soln[j];
-            equalHB[4*j+k].in[1] <== guess[k];
-            blow += equalHB[4*j+k].out;
-            if (j == k) {
-                hit += equalHB[4*j+k].out;
-                blow -= equalHB[4*j+k].out;
+    for (j=0; j<5; j++) {
+        for (k=0; k<5; k++) {
+            // equalHB[5*j+k] = IsEqual();
+            // equalHB[5*j+k].in[0] <== soln[j];
+            // equalHB[5*j+k].in[1] <== guess[k];
+
+            // equalHB[10*j+k] = IsEqual();
+            // equalHB[10*j+k].in[0] <== soln[j];
+            // equalHB[10*j+k].in[1] <== guess[k];
+            // whites += equalHB[4*j+k].out;
+            // if (j == k) {
+            //     blacks += equalHB[4*j+k].out;
+            //     whites -= equalHB[4*j+k].out;
+            // }
+
+            equalBWB[5*j+k] = IsEqual();
+            equalBWB[5*j+k].in[0] <== solnColor[j];
+            equalBWB[5*j+k].in[1] <== guessColor[k];
+
+            equalBWB[25+5*j+k] = IsEqual();
+            equalBWB[25+5*j+k].in[0] <== solnShape[j];
+            equalBWB[25+5*j+k].in[1] <== guessShape[k];
+
+            if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && j==k){
+                colors[5*j+k] = Blacks;
+            }
+            if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && j!=k && colors[5*j+k] != Blacks){
+                colors[5*j+k] = Whites;
+            }
+            if((equalBWB[5*j+k].out ^ equalBWB[25+5*j+k].out) && colors[5*j+k] == None){
+                colors[5*j+k] = Blues;
             }
         }
     }
 
-    // Create a constraint around the number of hit
+    // Create a constraint around the number of blacks
     component equalHit = IsEqual();
     equalHit.in[0] <== pubNumHit;
-    equalHit.in[1] <== hit;
+    equalHit.in[1] <== blacks;
     equalHit.out === 1;
     
-    // Create a constraint around the number of blow
+    // Create a constraint around the number of whites
     component equalBlow = IsEqual();
     equalBlow.in[0] <== pubNumBlow;
-    equalBlow.in[1] <== blow;
+    equalBlow.in[1] <== whites;
     equalBlow.out === 1;
 
     // Verify that the hash of the private solution matches pubSolnHash
