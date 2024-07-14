@@ -42,8 +42,8 @@ template MastermindVariation() {
 
     //TODO - extract this to a template
     //NOTE - contraint to pubNumBlacks+pubNumWhites+pubNumBlues<=4
-    lessThanFour = LessThan(3);
-    signal interBlackWhitesPegSum <== pubNumBlacks + pubNumWhites
+    component lessThanFour = LessThan(3);
+    signal interBlackWhitesPegSum <== pubNumBlacks + pubNumWhites;
     lessThanFour.in[0] <== interBlackWhitesPegSum + pubNumBlues;
     lessThanFour.in[1] <== 5;
     lessThanFour.out === 1;
@@ -204,13 +204,13 @@ template MastermindVariation() {
     }
 
     component equalAssertion[3];
-    var colorAssertionCounted = [numBlacks, numWhites, numBlues];
-    var colorAssertionPub = [pubNumBlacks, pubNumWhites, pubNumBlues];
+    var colorAssertionCounted[3] = [numBlacks, numWhites, numBlues];
+    var colorAssertionPub[3] = [pubNumBlacks, pubNumWhites, pubNumBlues];
 
     for(var index=0; index<=3; index++){
         equalAssertion[index] = IsEqual();
-        equalAssertion[index].in[0] = colorAssertionCounted[index];
-        equalAssertion[index].in[1] = colorAssertionPub[index];
+        equalAssertion[index].in[0] <== colorAssertionCounted[index];
+        equalAssertion[index].in[1] <== colorAssertionPub[index];
         equalAssertion[index].out === 1;
     }
 
@@ -232,4 +232,4 @@ template MastermindVariation() {
     pubSolnHash === solnHashOut;
  }
 
-component main {public [pubGuessA, pubGuessB, pubGuessC, pubGuessD, pubNumHit, pubNumBlow, pubSolnHash]} = MastermindVariation();
+component main {public [pubGuessColorA, pubGuessColorB, pubGuessColorC, pubGuessColorD, pubGuessColorE, pubGuessShapeA, pubGuessShapeB, pubGuessShapeC, pubGuessShapeD, pubGuessShapeE, pubNumBlacks, pubNumWhites, pubNumBlues, pubSolnHash]} = MastermindVariation();
