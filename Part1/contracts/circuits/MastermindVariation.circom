@@ -207,6 +207,7 @@ template MastermindVariation() {
     var colorAssertionCounted[3] = [numBlacks, numWhites, numBlues];
     var colorAssertionPub[3] = [pubNumBlacks, pubNumWhites, pubNumBlues];
 
+    for(var index=0; index<3; index++){
         equalAssertion[index] = IsEqual();
         equalAssertion[index].in[0] <== colorAssertionCounted[index];
         equalAssertion[index].in[1] <== colorAssertionPub[index];
