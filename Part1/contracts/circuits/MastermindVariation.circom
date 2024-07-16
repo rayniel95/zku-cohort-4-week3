@@ -192,19 +192,6 @@ template MastermindVariation() {
         lessThan[j+15].in[0] <== solnShape[j];
         lessThan[j+15].in[1] <== 5;
         lessThan[j+15].out === 1;
-
-        // for (k=j+1; k<4; k++) {
-        //     // Create a constraint that the solution and guess digits are unique. no duplication.
-        //     equalGuess[equalIdx] = IsEqual();
-        //     equalGuess[equalIdx].in[0] <== guess[j];
-        //     equalGuess[equalIdx].in[1] <== guess[k];
-        //     equalGuess[equalIdx].out === 0;
-        //     equalSoln[equalIdx] = IsEqual();
-        //     equalSoln[equalIdx].in[0] <== soln[j];
-        //     equalSoln[equalIdx].in[1] <== soln[k];
-        //     equalSoln[equalIdx].out === 0;
-        //     equalIdx += 1;
-        // }
     }
 
     // Count blacks & whites & blues
