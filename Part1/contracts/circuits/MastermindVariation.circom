@@ -195,87 +195,15 @@ template MastermindVariation() {
     }
 
     // Count blacks & whites & blues
-    var Blacks = 1;
-    var Whites = 2;
-    var Blues = 3;
-    var None = 0;
-    var colors[25];
-    component equalBWB[50];
+    component countPegs = CountPegs();
+    countPegs.guessColor <== guessColor;
+    countPegs.solnColor <== solnColor;
+    countPegs.guessShape <== guessShape;
+    countPegs.solnShape <== solnShape;
 
-    for (j=0; j<5; j++) {
-        for (k=0; k<5; k++) {
-            // equalHB[5*j+k] = IsEqual();
-            // equalHB[5*j+k].in[0] <== soln[j];
-            // equalHB[5*j+k].in[1] <== guess[k];
-
-            // equalHB[10*j+k] = IsEqual();
-            // equalHB[10*j+k].in[0] <== soln[j];
-            // equalHB[10*j+k].in[1] <== guess[k];
-            // whites += equalHB[4*j+k].out;
-            // if (j == k) {
-            //     blacks += equalHB[4*j+k].out;
-            //     whites -= equalHB[4*j+k].out;
-            // }
-
-            equalBWB[5*j+k] = IsEqual();
-            equalBWB[5*j+k].in[0] <== solnColor[j];
-            equalBWB[5*j+k].in[1] <== guessColor[k];
-
-            equalBWB[25+5*j+k] = IsEqual();
-            equalBWB[25+5*j+k].in[0] <== solnShape[j];
-            equalBWB[25+5*j+k].in[1] <== guessShape[k];
-
-            if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && j==k){
-                colors[5*j+k] = Blacks;
-            } else{
-                if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && colors[5*j+k] != Blacks){
-                    colors[5*j+k] = Whites;
-                } else{
-                    if((equalBWB[5*j+k].out || equalBWB[25+5*j+k].out) && colors[5*j+k] == None){
-                       colors[5*j+k] = Blues;
-                    }
-                }
-            }
-        }
-    }
-
-    var numBlacks;
-    var numWhites; 
-    var numBlues;
-    var res = 4;
-    var intBlacks;
-    var intWhites;
-    var intBlues;
-
-    for(var index = 0; index<25; index++){
-        if(colors[index]==Blacks){
-            intBlacks++;
-        }
-        if(colors[index]==Whites){
-            intWhites++;
-        }
-        if(colors[index]==Blues){
-            intBlues++;
-        }
-    }
-    if(intBlacks>=res){
-        numBlacks=res;
-    } else{
-        numBlacks = intBlacks;
-        res -= numBlacks;
-        if(intWhites>=res){
-            numWhites = res;
-        }else{
-            numWhites = intWhites;
-            res -= numWhites;
-            if(intBlues>=res){
-                numBlues = res;
-            }else{
-                numBlues = intBlues;
-                res -= numBlues;
-            }
-        }
-    }
+    signal numBlacks <== countPegs.numBlacks;
+    signal numWhites <== countPegs.numWhites;
+    signal numBlues <== countPegs.numBlues;
 
     component equalAssertion[3];
     var colorAssertionCounted[3] = [numBlacks, numWhites, numBlues];
