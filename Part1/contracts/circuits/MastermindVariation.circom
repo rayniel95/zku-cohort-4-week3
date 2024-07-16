@@ -7,6 +7,93 @@ include "../../node_modules/circomlib/circuits/bitify.circom";
 include "../../node_modules/circomlib/circuits/poseidon.circom";
 
 
+template CountPegs(){
+    signal input solnColor[5];
+    signal input guessColor[5];
+    signal input solnShape[5];
+    signal input guessShape[5];
+
+    signal output numBlacks;
+    signal output numWhites; 
+    signal output numBlues;
+
+    var Blacks = 1;
+    var Whites = 2;
+    var Blues = 3;
+    var None = 0;
+    var colors[25];
+    component equalBWB[50];
+
+    for (var j=0; j<5; j++) {
+        for (var k=0; k<5; k++) {
+            equalBWB[5*j+k] = IsEqual();
+            equalBWB[5*j+k].in[0] <== solnColor[j];
+            equalBWB[5*j+k].in[1] <== guessColor[k];
+
+            equalBWB[25+5*j+k] = IsEqual();
+            equalBWB[25+5*j+k].in[0] <== solnShape[j];
+            equalBWB[25+5*j+k].in[1] <== guessShape[k];
+
+            if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && j==k){
+                colors[5*j+k] = Blacks;
+            } else{
+                if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && colors[5*j+k] != Blacks){
+                    colors[5*j+k] = Whites;
+                } else{
+                    if((equalBWB[5*j+k].out || equalBWB[25+5*j+k].out) && colors[5*j+k] == None){
+                       colors[5*j+k] = Blues;
+                    }
+                }
+            }
+        }
+    }
+
+    var res = 4;
+    var intBlacks = 0;
+    var intWhites = 0;
+    var intBlues = 0;
+    component equalColors[75];
+
+    for(var index = 0; index<25; index++){
+        //TODO - here makes each intvar as a variable holding a signal sum where
+        // each signal can take 0 to 1 values. use equal component for this
+        equalColors[index] = IsEqual();
+        equalColors[index].in[0] <== colors[index];
+        equalColors[index].in[1] <== Blacks;
+        intBlacks += equalColors[index].out;
+
+        equalColors[25+index] = IsEqual();
+        equalColors[25+index].in[0] <== colors[index];
+        equalColors[25+index].in[1] <== Whites;
+        intWhites += equalColors[25+index].out;
+
+        equalColors[50+index] = IsEqual();
+        equalColors[50+index].in[0] <== colors[index];
+        equalColors[50+index].in[1] <== Blues;
+        intBlues += equalColors[50+index].out;
+    }
+    //TODO - here use greather equal component, ternary assignament operator
+    if(intBlacks>=res){
+        numBlacks <== res;
+    } else{
+        numBlacks <== intBlacks;
+        res -= numBlacks;
+        if(intWhites>=res){
+            numWhites <== res;
+        }else{
+            numWhites <== intWhites;
+            res -= numWhites;
+            if(intBlues>=res){
+                numBlues <== res;
+            }else{
+                numBlues <== intBlues;
+                res -= numBlues;
+            }
+        }
+    }
+
+}
+
 template MastermindVariation() {
     // Public inputs
     signal input pubGuessColorA;
