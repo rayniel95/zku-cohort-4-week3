@@ -5,7 +5,35 @@ pragma circom 2.0.0;
 include "../../node_modules/circomlib/circuits/comparators.circom";
 include "../../node_modules/circomlib/circuits/bitify.circom";
 include "../../node_modules/circomlib/circuits/poseidon.circom";
+include "../../node_modules/circomlib/circuits/gates.circom";
 
+
+template ConditionalAssignament(){
+    signal input condition;
+    signal input firstValue;
+    signal input secondValue;
+
+    signal output result;
+
+    //NOTE - constraint to condition
+    component equalTrue = IsEqual();
+    equalTrue.in[0] <== condition;
+    equalTrue.in[1] <== 1;
+
+    component equalFalse = IsEqual();
+    equalFalse.in[0] <== condition;
+    equalFalse.in[1] <== 0;
+
+    component or = OR();
+    or.a <== equalTrue.out;
+    or.b <== equalFalse.out;
+
+    or.out === 1;
+
+    signal interResult;
+    interResult <== secondValue - secondValue*condition;
+    result <== firstValue * condition + interResult;
+}
 
 template CountPegs(){
     signal input solnColor[5];
