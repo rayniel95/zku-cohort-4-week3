@@ -35,6 +35,39 @@ template ConditionalAssignament(){
     result <== firstValue * condition + interResult;
 }
 
+template ConditionalAssignamentNExclusiveConditional(conditionNumber){
+    signal input conditions[conditionNumber];
+    signal input values[conditionNumber+1];
+
+    signal output result;
+
+    //NOTE - constraint over conditions
+    component equalTrue[conditionNumber];
+    component equalFalse[conditionNumber];
+    component orCheck[conditionNumber];
+
+    for(var i=0; i<conditionNumber; i++){
+        equalTrue[i] = IsEqual();
+        equalTrue[i].in[0] <== conditions[i];
+        equalTrue[i].in[1] <== 1;
+
+        equalFalse[i] = IsEqual();
+        equalFalse[i].in[0] <== conditions[i];
+        equalFalse[i].in[1] <== 0;
+
+        orCheck[i] = OR();
+        orCheck[i].a <== equalTrue.out;
+        orCheck[i].b <== equalFalse.out;
+
+        orCheck[i].out === 1;
+    }
+    var inter = values[0]*conditions[0];
+    for(var index=1; index<conditionNumber; index++){
+        inter *= values[index] * conditions[index];
+    }
+    result <== inter;
+}
+
 template CountPegs(){
     signal input solnColor[5];
     signal input guessColor[5];
