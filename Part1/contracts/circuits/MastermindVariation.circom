@@ -95,17 +95,17 @@ template CountPegs(){
             equalBWB[25+5*j+k].in[0] <== solnShape[j];
             equalBWB[25+5*j+k].in[1] <== guessShape[k];
 
-            if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && j==k){
-                colors[5*j+k] = Blacks;
-            } else{
-                if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && colors[5*j+k] != Blacks){
-                    colors[5*j+k] = Whites;
-                } else{
-                    if((equalBWB[5*j+k].out || equalBWB[25+5*j+k].out) && colors[5*j+k] == None){
-                       colors[5*j+k] = Blues;
-                    }
-                }
-            }
+            // if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && j==k){
+            //     colors[5*j+k] = 1;
+            // } else{
+            //     if(equalBWB[5*j+k].out && equalBWB[25+5*j+k].out && colors[5*j+k] != Blacks){
+            //         colors[5*j+k] = 2;
+            //     } else{
+            //         if((equalBWB[5*j+k].out || equalBWB[25+5*j+k].out) && colors[5*j+k] == None){
+            //            colors[5*j+k] = 3;
+            //         }
+            //     }
+            // }
         }
     }
 
@@ -116,8 +116,6 @@ template CountPegs(){
     component equalColors[75];
 
     for(var index = 0; index<25; index++){
-        //TODO - here makes each intvar as a variable holding a signal sum where
-        // each signal can take 0 to 1 values. use equal component for this
         equalColors[index] = IsEqual();
         equalColors[index].in[0] <== colors[index];
         equalColors[index].in[1] <== Blacks;
@@ -133,25 +131,65 @@ template CountPegs(){
         equalColors[50+index].in[1] <== Blues;
         intBlues += equalColors[50+index].out;
     }
-    //TODO - here use greather equal component, ternary assignament operator
-    if(intBlacks>=res){
-        numBlacks <== res;
-    } else{
-        numBlacks <== intBlacks;
-        res -= numBlacks;
-        if(intWhites>=res){
-            numWhites <== res;
-        }else{
-            numWhites <== intWhites;
-            res -= numWhites;
-            if(intBlues>=res){
-                numBlues <== res;
-            }else{
-                numBlues <== intBlues;
-                res -= numBlues;
-            }
-        }
-    }
+    //TODO - here use greather equal component, ternary assignament operator. review
+    // this algorithm
+    component greatEqBlacks = GreaterEqThan(32);
+    greatEqBlacks.in[0] <== intBlacks;
+    greatEqBlacks.in[1] <== res;
+    component assigBlacks = ConditionalAssignament();
+    assigBlacks.condition <== greatEqBlacks.out;
+    assigBlacks.firstValue <== res;
+    assigBlacks.secondValue <== intBlacks;
+    numBlacks <== assigBlacks.result;
+    // numBlacks <==  ? res : intBlacks;
+
+    // component notBlacks = NOT();
+    // notBlacks.in <== greatEqBlacks.out;
+    
+    res -= numBlacks;
+
+    component greatEqWhites = GreaterEqThan(32);
+    greatEqWhites.in[0] <== intWhites;
+    greatEqWhites.in[1] <== res;
+    component assigWhites = ConditionalAssignament();
+    assigWhites.condition <== greatEqWhites.out;
+    assigWhites.firstValue <== res;
+    assigWhites.secondValue <== intWhites;
+    numWhites <== assigWhites.result;
+    // numWhites <== greatEqWhites.out ? res : intWhites;
+
+    res -= numWhites;
+
+    component greatEqBlues = GreaterEqThan(32);
+    greatEqBlues.in[0] <== intBlues;
+    greatEqBlues.in[1] <== res;
+    component assigBlues = ConditionalAssignament();
+    assigBlues.condition <== greatEqBlues.out;
+    assigBlues.firstValue <== res;
+    assigBlues.secondValue <== intBlues;
+    numBlues <== assigBlues.result;
+    // numBlues <== greatEqBlues.out ? res : intBlues;
+
+    res -= numBlues;
+
+    // if(intBlacks>=res){
+    //     numBlacks <== res;
+    // } else{
+    //     numBlacks <== intBlacks;
+    //     res -= numBlacks;
+    //     if(intWhites>=res){
+    //         numWhites <== res;
+    //     }else{
+    //         numWhites <== intWhites;
+    //         res -= numWhites;
+    //         if(intBlues>=res){
+    //             numBlues <== res;
+    //         }else{
+    //             numBlues <== intBlues;
+    //             res -= numBlues;
+    //         }
+    //     }
+    // }
 
 }
 
